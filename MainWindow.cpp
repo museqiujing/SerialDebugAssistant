@@ -26,7 +26,7 @@ SerialDebugAssistant::~SerialDebugAssistant()
 }
 
 //按键刷新串口 被点击时触发
-void SerialDebugAssistant::on_key_Refresh_COM_clicked()
+void SerialDebugAssistant::on_key_Refresh_COM_clicked()    
 {
 	ui.comboBox_available_COM->clear(); //清除下拉框内容
 	foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
@@ -74,13 +74,13 @@ void SerialDebugAssistant::on_key_open_COM_clicked()
 		if(COM->open(QIODevice::ReadWrite)==true) //判断串口打开成功
 		{
 			ui.key_open_COM->setText("关闭串口"); //按钮显示为关闭串口
-			ui.LED1->setStyleSheet("background-color:green");//设置LED1的背景颜色为绿色
+			ui.key_open_COM->setStyleSheet("background-color:green");//设置该按钮的背景颜色为绿色
 			ui.comboBox_available_COM->setEnabled(false); //下拉框不可用
 			ui.comboBox_baudRate->setEnabled(false); //下拉框不可用
 		}
 		else
 		{
-			ui.LED1->setStyleSheet("background-color:red");//设置LED1的背景颜色为红色
+			ui.key_open_COM->setStyleSheet("background-color:red");//设置LED1的背景颜色为红色
 			QMessageBox::warning(this, "警告", "串口打开失败！或其他错误。\r\n请选择正确的串口或该串口被占用"); //弹出警告对话框
 		}
 	}
@@ -88,7 +88,7 @@ void SerialDebugAssistant::on_key_open_COM_clicked()
 	{
 		COM->close(); //关闭串口
 		ui.key_open_COM->setText("打开串口"); //按钮显示为打开串口
-		ui.LED1->setStyleSheet("background-color:white");//设置LED1的背景颜色为白色
+		ui.key_open_COM->setStyleSheet("background-color:white");//设置LED1的背景颜色为白色
 		ui.comboBox_available_COM->setEnabled(true); //下拉框可用
 		ui.comboBox_baudRate->setEnabled(true); //下拉框可用
 	}
