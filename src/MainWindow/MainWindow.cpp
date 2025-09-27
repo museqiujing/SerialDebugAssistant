@@ -1,8 +1,6 @@
 ﻿#include "MainWindow.h"
 
 
-
-
 //定义一个串口指针
 QSerialPort* COM = new QSerialPort();//这是Qt串口类,用于操作串口,实例化一个串口对象
 
@@ -12,11 +10,12 @@ SerialDebugAssistant::SerialDebugAssistant(QWidget *parent)
     ui.setupUi(this);
 
 
-	ui.comboBox_available_COM->clear(); //清除下拉框内容
+	/*ui.comboBox_available_COM->clear(); //清除下拉框内容
 	foreach(const QSerialPortInfo & info, QSerialPortInfo::availablePorts())
 	{
 		ui.comboBox_available_COM->addItem(info.portName());//将串口名称添加到下拉框中
 	}
+	*/  //程序启动时自动枚举串口
 
 	connect(COM, &QSerialPort::readyRead, this, &SerialDebugAssistant::RX_FUN); //连接信号槽 当有数据接收时触发RX_FUN函数
 }
@@ -25,7 +24,7 @@ SerialDebugAssistant::~SerialDebugAssistant()
 {
 }
 
-//按键刷新串口 被点击时触发
+/*按键刷新串口 被点击时触发
 void SerialDebugAssistant::on_key_Refresh_COM_clicked()    
 {
 	ui.comboBox_available_COM->clear(); //清除下拉框内容
@@ -34,7 +33,7 @@ void SerialDebugAssistant::on_key_Refresh_COM_clicked()
 		ui.comboBox_available_COM->addItem(info.portName());//将串口名称添加到下拉框中
 	}
 }
-
+*/
 
 //按键打开串口 被点击时触发 
 void SerialDebugAssistant::on_key_open_COM_clicked()
