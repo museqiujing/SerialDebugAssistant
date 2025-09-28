@@ -13,6 +13,7 @@ target_link_libraries(MainWindow PUBLIC
     Qt6::Core
     Qt6::Widgets
     Qt6::SerialPort
+    method
 )
 
 

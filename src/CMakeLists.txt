@@ -6,7 +6,7 @@ qt_add_executable(main
 #  链接子目录库
 target_link_libraries(main PUBLIC
     MainWindow 
-    Method    
+    method    
     Qt6::Core
     Qt6::Widgets
     Qt6::SerialPort
@@ -15,7 +15,7 @@ target_link_libraries(main PUBLIC
 # Windows 下不显示控制台
 set_target_properties(main
     PROPERTIES
-        WIN32_EXECUTABLE TRUE    #FALSE 
+        WIN32_EXECUTABLE  FALSE #TRUE
 ) 
 
 # 递归编译子目录

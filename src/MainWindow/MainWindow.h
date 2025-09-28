@@ -8,6 +8,9 @@
 #include <QThread>   //包含线程头文件
 #include <QTimer>    //包含定时器头文件
 #include <QList>     //包含列表头文件
+#include<QDebug>     //包含调试头文件
+
+class SerialWatcher;//前置声明
 
 class SerialDebugAssistant : public QWidget
 {
@@ -26,5 +29,6 @@ private slots:
 	void RX_FUN(); //串口接收数据处理函数
 private:
 	Ui::SerialDebugAssistantClass ui;
+	SerialWatcher* m_watcher;
 };
 
