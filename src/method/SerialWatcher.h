@@ -20,13 +20,13 @@ public:
 	~SerialWatcher();
 	void populateComboBox(QComboBox* combo); // 初始化时填充一次串口列表
 private slots:
-	void onListChanged(const QList<QSerialPortInfo>& list);
+	void onListChanged(const QList<QSerialPortInfo>& list); // 主线程槽函数，更新串口列表
 signals:
 	void ready(const QList<QSerialPortInfo>& list); // 立即刷一次
 private:
-	QThread          m_thread;
-	SerialProductor* m_productor;
-	QComboBox* m_combo = nullptr;
+	QThread          m_thread;      // 用于轮询串口的子线程
+	SerialProductor* m_productor;   // 串口轮询对象，工作在子线程
+	QComboBox* m_combo = nullptr;   // 目标下拉框
 };
 
 

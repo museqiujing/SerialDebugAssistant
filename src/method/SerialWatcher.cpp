@@ -7,16 +7,10 @@ SerialWatcher::SerialWatcher(QObject* parent)
 	: QObject(parent), m_productor(new SerialProductor)
 {
     m_productor->moveToThread(&m_thread);
+    connect(&m_thread, &QThread::started, m_productor, &SerialProductor::startWatching);  // 线程启动时调用入口
 	connect(&m_thread, &QThread::finished, m_productor, &QObject::deleteLater);    // 线程结束时删除对象
-	connect(&m_thread, &QThread::started, m_productor, &SerialProductor::startWatching);  // 线程启动时调用入口
-    connect(this, &SerialWatcher::ready,
-        this, &SerialWatcher::onListChanged,
-		Qt::QueuedConnection);  // 跨线程连接
-    bool ok = connect(m_productor, &SerialProductor::portListChanged,
-        this, &SerialWatcher::onListChanged,
-        Qt::QueuedConnection);
-    qDebug() << "connect portListChanged -> onListChanged:" << ok;
-
+    connect(this, &SerialWatcher::ready,this, &SerialWatcher::onListChanged,Qt::QueuedConnection);  // 跨线程连接
+    bool ok = connect(m_productor, &SerialProductor::portListChanged,this, &SerialWatcher::onListChanged,Qt::QueuedConnection);
     m_thread.start();
 }
 
@@ -38,20 +32,14 @@ void SerialWatcher::populateComboBox(QComboBox* combo)
 // 主线程槽函数，更新串口列表
 void SerialWatcher::onListChanged(const QList<QSerialPortInfo>& list)
 {
-    qDebug() << "onListChanged received in thread:" << QThread::currentThread()
-        << "combo=" << m_combo;
     if (!m_combo) return;
-    QString curr = m_combo->currentText();
-    m_combo->clear();
-    for (const auto& info : list)
-        m_combo->addItem(info.portName());
-    int idx = m_combo->findText(curr);
-    if (idx != -1) m_combo->setCurrentIndex(idx);
+	QString curr = m_combo->currentText();   // 记录当前选择
+	m_combo->clear();                       // 清空
+	for (const auto& info : list)           // 重新填充
+		m_combo->addItem(info.portName());  // 这里只显示端口名
+	int idx = m_combo->findText(curr);      // 尝试恢复选择
+	if (idx != -1) m_combo->setCurrentIndex(idx);  // 找到则恢复
 }
-
-
-
-
 
 
 SerialProductor::SerialProductor(QObject* parent)
@@ -63,16 +51,13 @@ SerialProductor::SerialProductor(QObject* parent)
 // 子线程函数，定时轮询串口列表
 void SerialProductor::startWatching()
 {
-    qDebug() << "SerialProductor thread started:" << QThread::currentThread();
-    emit portListChanged(QSerialPortInfo::availablePorts());
-    m_lastList = QSerialPortInfo::availablePorts();
+	emit portListChanged(QSerialPortInfo::availablePorts());  // 线程启动时先发一次
+	m_lastList = QSerialPortInfo::availablePorts();   // 记录初始列表
 
     // 创建定时器，周期轮询
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]() {
         QList<QSerialPortInfo> now = QSerialPortInfo::availablePorts();
-        qDebug() << "polling: last=" << m_lastList.size() << "now=" << now.size();
-
         // 大小不同或内容不同 → 更新
         if (now.size() != m_lastList.size() ||
             !std::equal(now.begin(), now.end(), m_lastList.begin(),
@@ -81,7 +66,6 @@ void SerialProductor::startWatching()
                 a.systemLocation() == b.systemLocation(); }))
         {
             // 不相等 → 更新
-            qDebug() << "emitting portListChanged with count=" << now.size();
             m_lastList = now;
             emit portListChanged(now);
         }
