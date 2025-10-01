@@ -15,7 +15,7 @@ target_link_libraries(main PUBLIC
 # Windows 下不显示控制台
 set_target_properties(main
     PROPERTIES
-        WIN32_EXECUTABLE  FALSE #TRUE
+        WIN32_EXECUTABLE  TRUE  #FALSE 
 ) 
 
 # 递归编译子目录

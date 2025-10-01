@@ -12,6 +12,7 @@ SerialDebugAssistant::SerialDebugAssistant(QWidget *parent)
 	//实例化一个串口监视器对象
 	m_watcher = new SerialWatcher(this);
 	m_watcher->populateComboBox(ui.comboBox_available_COM);
+	ui.comboBox_baudRate->setEditable(true);
 }
 
 SerialDebugAssistant::~SerialDebugAssistant()
@@ -23,7 +24,7 @@ SerialDebugAssistant::~SerialDebugAssistant()
 void SerialDebugAssistant::on_key_open_COM_clicked()
 {
 	//串口初始化
-	QSerialPort::BaudRate baudRate; //波特率
+	qint32 baudRate = QSerialPort::Baud9600;; //波特率默认9600
 	QSerialPort::DataBits dataBits; //数据位
 	QSerialPort::Parity checkBits;     //奇偶校验位
 	QSerialPort::StopBits stopBits; //停止位
@@ -41,8 +42,27 @@ void SerialDebugAssistant::on_key_open_COM_clicked()
 	else if (ui.comboBox_baudRate->currentText() == "38400") {
 		baudRate = QSerialPort::Baud38400;
 	}
+	else if (ui.comboBox_baudRate->currentText() == "57600") {
+		baudRate = QSerialPort::Baud57600;
+	}
+	else if (ui.comboBox_baudRate->currentText() == "19200") {
+		baudRate = QSerialPort::Baud19200;
+	}
+	else if (ui.comboBox_baudRate->currentText() == "115200") {
+		baudRate = QSerialPort::Baud115200;
+	}
+	else if (ui.comboBox_baudRate->currentText() == "1200") {
+		baudRate = QSerialPort::Baud1200;
+	}
+	else if (ui.comboBox_baudRate->currentText() == "2400") {
+		baudRate = QSerialPort::Baud2400;
+	}
+	else if(baudRate > 110 && baudRate < 4000000){
+		baudRate = ui.comboBox_baudRate->currentText().toInt();
+	}
 	else {
-		baudRate = QSerialPort::Baud9600; //默认9600
+		QMessageBox::warning(this, "错误", "波特率超出范围");
+		return;
 	}
 	
 	//设置数据位
